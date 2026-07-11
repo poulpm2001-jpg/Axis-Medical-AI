@@ -2,31 +2,88 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Axis Medical AI</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; text-align: center; background-color: #f4f7f6; }
-        .container { background: white; padding: 30px; border-radius: 10px; max-width: 500px; margin: 0 auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        input, button { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { background-color: #28a745; color: white; border: none; cursor: pointer; font-size: 16px; }
-        button:hover { background-color: #218838; }
-        .result { background: #e2f0d9; padding: 15px; border-radius: 5px; margin-top: 20px; text-align: right; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result-box {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-left: 5px solid #28a745;
+            border-radius: 4px;
+            text-align: right;
+            white-space: pre-wrap;
+            font-size: 16px;
+            line-height: 1.6;
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
         <h1>مرحباً بك في Axis Medical AI</h1>
+        
         <form action="/diagnose" method="POST">
-            <input type="text" name="symptom" placeholder="اكتب الأعراض المرضية هنا..." required>
-            <input type="text" name="country" placeholder="الدولة (مثلاً: مصر)..." required>
+            <textarea name="symptom" rows="4" placeholder="اكتب الأعراض هنا بالتفصيل..." required></textarea>
+            <input type="text" name="country" placeholder="الدولة (مثال: مصر)" required>
             <button type="submit">ابدأ التشخيص الذكي</button>
         </form>
-        
+
+        <!-- لو في نتيجة جاية من السيرفر هتظهر هنا فوراً -->
         {% if result %}
-            <div class="result">
-                <h3>نتيجة التشخيص المبدئي:</h3>
+            <div class="result-box">
+                <strong>التقرير الطبي المبدئي:</strong>
                 <p>{{ result }}</p>
             </div>
         {% endif %}
     </div>
+
 </body>
 </html>
