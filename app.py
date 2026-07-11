@@ -11,7 +11,7 @@ app = Flask(__name__)
 # مفتاح سري لتأمين جلسة الدخول (Session)
 app.secret_key = "axis_medical_secret_key_2026" 
 
-# تأكد من ضبط الـ API Key في الـ Terminal قبل التشغيل
+# تأكد من ضبط الـ API Key في الـ Variables على Railway
 client = genai.Client()
 
 SYSTEM_INSTRUCTION = """
@@ -28,60 +28,21 @@ SYSTEM_INSTRUCTION = """
 
 @app.route('/')
 def home():
-    # لو المستخدم عامل login يدخل على الشات علطول، لو مش عامل يروح لصفحة الدخول
-    if 'username' in session:
-        return render_template('index.html')
-    return render_template('login.html')
-
-@app.route('/login', methods=['POST'])
-def login():
-    username = request.form.get('username')
-    email = request.form.get('email')
-    password = request.form.get('password')
-    
-    # محاولة تسجيل المستخدم أو فحص بياناته (للتسهيل لو مش موجود بنسجله علطول)
-    if not database.register_user(username, password):
-        # لو موجود بيفحص الباسورد
-        tier = database.check_user(username, password)
-    else:
-        tier = "Free" # المستخدم الجديد بيبدأ مجاني
-        
-    if tier:
-        # حفظ بيانات المستخدم في الـ Session
-        session['username'] = username
-        session['tier'] = tier
-        session['email'] = email
-        
-        # إرسال إيميل الأمان والترحيب فوراً
-        email_sender.send_welcome_email(email, username)
-        
-        return redirect(url_for('home'))
-    else:
-        return "بيانات الدخول غير صحيحة، يرجى المحاولة مجدداً."
+    # هيفتح صفحة الواجهة الرئيسية علطول بدون تعقيد تسجيل الدخول حالياً
+    return render_template('index.html')
 
 @app.route('/diagnose', methods=['POST'])
 def diagnose():
-    if 'username' not in session:
-        return redirect(url_for('home'))
-        
     symptom = request.form.get('symptom')
     country = request.form.get('country')
-    tier = session.get('tier', 'Free')
     
-    # إعداد الـ Configuration بناءً على نوع الحساب
-    if tier == "Premium":
-        config = types.GenerateContentConfig(
-            system_instruction=SYSTEM_INSTRUCTION,
-            temperature=0.3,
-            tools=[{"google_search": {}}] # سرش حي للحساب المدفوع
-        )
-        prompt = f"المريض من دولة ({country}). يشتكي من: ({symptom}). حلل أجهزة الجسم المصابة بناءً على جايتون وأكسفورد، وابحث عبر الإنترنت عن الأدوية التجارية المتاحة حالياً وبدائلها والمادة الفعالة مع مراعاة النواقص."
-    else:
-        config = types.GenerateContentConfig(
-            system_instruction=SYSTEM_INSTRUCTION,
-            temperature=0.2
-        )
-        prompt = f"المريض من دولة ({country}). يشتكي من: ({symptom}). قم بالتشخيص بناءً على المراجع، واذكر اسم تجاري أساسي واحد والمادة الفعالة فقط دون تفاصيل البدائل الحية أو النواقص."
+    # هنخلي الحساب Premium افتراضياً عشان يشتغل بكامل قوته والسرش الحي
+    config = types.GenerateContentConfig(
+        system_instruction=SYSTEM_INSTRUCTION,
+        temperature=0.3,
+        tools=[{"google_search": {}}] # سرش حي
+    )
+    prompt = f"المريض من دولة ({country}). يشتكي من: ({symptom}). حلل أجهزة الجسم المصابة بناءً على جايتون وأكسفورد، وابحث عبر الإنترنت عن الأدوية التجارية المتاحة حالياً وبدائلها والمادة الفعالة مع مراعاة النواقص."
 
     response = client.models.generate_content(
         model='gemini-2.5-flash',
@@ -89,6 +50,7 @@ def diagnose():
         config=config,
     )
     
+    # تصليح القفلة اللي كانت هنا وتمرير النتيجة للـ index.html صح
     return render_template('index.html', result=response.text)
 
 if __name__ == '__main__':
