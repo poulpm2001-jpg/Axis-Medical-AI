@@ -30,14 +30,13 @@ def diagnose():
     symptom = request.form.get('symptom')
     country = request.form.get('country')
     
-    # إعدادات التشخيص والبحث الحي عبر الإنترنت
+    # إعدادات التشخيص بدون سرش إنترنت عشان الحساب مجاني وما يضربش كوتا
     config = types.GenerateContentConfig(
         system_instruction=SYSTEM_INSTRUCTION,
-        temperature=0.3,
-        tools=[{"google_search": {}}] 
+        temperature=0.3
     )
     
-    prompt = f"المريض من دولة ({country}). يشتكي من: ({symptom}). حلل أجهزة الجسم المصابة بناءً على جايتون وأكسفورد، وابحث عبر الإنترنت عن الأدوية التجارية المتاحة حالياً وبدائلها والمادة الفعالة مع مراعاة النواقص."
+    prompt = f"المريض من دولة ({country}). يشتكي من: ({symptom}). حلل أجهزة الجسم المصابة بناءً على جايتون وأكسفورد، واذكر المادة الفعالة والبدائل الطبية المتاحة."
 
     try:
         response = client.models.generate_content(
