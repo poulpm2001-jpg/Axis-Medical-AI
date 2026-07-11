@@ -40,7 +40,7 @@ def diagnose():
     config = types.GenerateContentConfig(
         system_instruction=SYSTEM_INSTRUCTION,
         temperature=0.3,
-        tools=[{"google_search": {}}] # سرش حي
+        tools=[{"google_search": {}}] # سرش حي ومستمر
     )
     prompt = f"المريض من دولة ({country}). يشتكي من: ({symptom}). حلل أجهزة الجسم المصابة بناءً على جايتون وأكسفورد، وابحث عبر الإنترنت عن الأدوية التجارية المتاحة حالياً وبدائلها والمادة الفعالة مع مراعاة النواقص."
 
@@ -50,7 +50,7 @@ def diagnose():
         config=config,
     )
     
-    # تصليح القفلة اللي كانت هنا وتمرير النتيجة للـ index.html صح
+    # تصليح القفلة وتمرير النتيجة للـ index.html صح
     return render_template('index.html', result=response.text)
 
 if __name__ == '__main__':
